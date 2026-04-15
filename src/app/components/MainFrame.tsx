@@ -6,7 +6,7 @@ import imgQwr1 from "../../imports/Frame7/adb4cdf593b45fc3e85212ac5c399eed41c397
 import imgVk61 from "../../imports/Frame7/d3550ae37bcbcc46631351e98c4a9aa61fdc8926.png";
 
 interface MainFrameProps {
-  onNavigate: (destination: 'photo' | 'qr' | 'time' | 'pass') => void;
+  onNavigate: (destination: 'photo' | 'qr' | 'time' | 'pass' | 'home') => void;
 }
 
 function Group() {
@@ -122,7 +122,15 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
       </div>
       
       {/* Top Header Elements */}
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] left-[15px] not-italic text-[31px] text-white top-[18px] whitespace-nowrap">Passes</p>
+      <button
+        onClick={() => onNavigate('home')}
+        className="absolute flex items-center gap-1 left-[15px] top-[22px] cursor-pointer hover:opacity-70 transition-opacity z-10"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M15 18l-6-6 6-6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <p className="font-['Inter:Bold',sans-serif] font-bold leading-[normal] not-italic text-[31px] text-white whitespace-nowrap">Passes</p>
+      </button>
       <div className="absolute bg-[#1e1e1e] h-[35px] left-[150px] rounded-[20px] top-[19px] w-[90px]" />
       <div className="absolute bg-[#edecec] h-[35px] left-[15px] rounded-[20px] top-[84px] w-[90px]" />
       <div className="absolute bg-[#1e1e1e] h-[35px] left-[261px] rounded-[25px] top-[21px] w-[109px]" />
