@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
+import { Home, Radio, Ticket, User } from "lucide-react";
 import svgPaths from "../../imports/Frame7/svg-u9kjemx1g5";
 import imgRealPass1 from "../../imports/Frame7/671bdc45a830fbdbad392677f1d1d3c5865b7339.png";
 import imgPasss1 from "../../imports/Frame7/2dadf32d9b24520cae70cd3a58d0f16672ad325f.png";
 import imgQwr1 from "../../imports/Frame7/adb4cdf593b45fc3e85212ac5c399eed41c39775.png";
 import imgVk61 from "../../imports/Frame7/d3550ae37bcbcc46631351e98c4a9aa61fdc8926.png";
 
+type NavDest = 'photo' | 'qr' | 'time' | 'pass' | 'home';
+
 interface MainFrameProps {
-  onNavigate: (destination: 'photo' | 'qr' | 'time' | 'pass' | 'home') => void;
+  onNavigate: (destination: NavDest) => void;
 }
 
 function Group() {
@@ -47,14 +50,11 @@ function Group1() {
   );
 }
 
-function TimeDisplay({ onNavigate }: { onNavigate: (destination: 'photo' | 'qr' | 'time' | 'pass') => void }) {
+function TimeDisplay({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -63,7 +63,7 @@ function TimeDisplay({ onNavigate }: { onNavigate: (destination: 'photo' | 'qr' 
 
   return (
     <>
-      <button 
+      <button
         onClick={() => onNavigate('time')}
         className="absolute font-['Kode_Mono:Regular',sans-serif] font-normal leading-[normal] left-[48px] text-[12px] text-black top-[634px] whitespace-nowrap cursor-pointer hover:opacity-70 transition-opacity"
       >
@@ -71,7 +71,7 @@ function TimeDisplay({ onNavigate }: { onNavigate: (destination: 'photo' | 'qr' 
       </button>
       <button
         onClick={() => onNavigate('time')}
-        className="absolute flex h-[27.058px] items-center justify-center left-[28px] top-[656px] w-[84.061px] cursor-pointer hover:opacity-70 transition-opacity" 
+        className="absolute flex h-[27.058px] items-center justify-center left-[28px] top-[656px] w-[84.061px] cursor-pointer hover:opacity-70 transition-opacity"
         style={{ "--transform-inner-width": "64", "--transform-inner-height": "22" } as React.CSSProperties}
       >
         <div className="flex-none rotate-[0.08deg]">
@@ -82,109 +82,122 @@ function TimeDisplay({ onNavigate }: { onNavigate: (destination: 'photo' | 'qr' 
   );
 }
 
+function BottomNav({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
+  return (
+    <div
+      className="absolute left-0 right-0 bottom-0 flex items-center justify-around"
+      style={{ height: 64, background: '#111', borderTop: '1px solid #222' }}
+    >
+      <NavBtn
+        icon={<Home size={20} color="#9ca3af" />}
+        label="Home"
+        onClick={() => onNavigate('home')}
+      />
+      <NavBtn
+        icon={<PassesNavIcon active />}
+        label="Passes"
+        active
+      />
+      <NavBtn
+        icon={<Radio size={20} color="#9ca3af" />}
+        label="Live"
+      />
+      <NavBtn
+        icon={<Ticket size={20} color="#9ca3af" />}
+        label="Ticket"
+      />
+      <NavBtn
+        icon={<User size={20} color="#9ca3af" />}
+        label="Profile"
+      />
+    </div>
+  );
+}
+
+function NavBtn({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      className="flex flex-col items-center gap-0.5 py-1 px-2 active:scale-95 transition-transform"
+      onClick={onClick}
+    >
+      {icon}
+      <span style={{ fontSize: 10, fontWeight: 500, color: active ? '#ef4444' : '#9ca3af' }}>
+        {label}
+      </span>
+    </button>
+  );
+}
+
+function PassesNavIcon({ active }: { active?: boolean }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M3 9C3 7.34 4.34 6 6 6h12c1.66 0 3 1.34 3 3v1a2 2 0 010 4v1c0 1.66-1.34 3-3 3H6c-1.66 0-3-1.34-3-3v-1a2 2 0 010-4V9z"
+        stroke={active ? '#ef4444' : '#9ca3af'}
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
 export default function MainFrame({ onNavigate }: MainFrameProps) {
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [validDate, setValidDate] = useState('15/05/2026');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formattedDate = currentTime.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '/');
-
-  const handleDateClick = () => {
-    setIsEditingDate(true);
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValidDate(e.target.value);
-  };
-
-  const handleDateBlur = () => {
-    setIsEditingDate(false);
-  };
-
+  const handleDateClick = () => setIsEditingDate(true);
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => setValidDate(e.target.value);
+  const handleDateBlur = () => setIsEditingDate(false);
   const handleDateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setIsEditingDate(false);
-    }
+    if (e.key === 'Enter') setIsEditingDate(false);
   };
 
   return (
-    <div className="absolute bg-black h-[874px] left-0 overflow-clip top-0 w-[402px]" data-name="iPhone 16 & 17 Pro - 1">
+    <div className="absolute bg-black h-[874px] left-0 overflow-clip top-0 w-[402px]" data-name="Pass Page">
       <div className="absolute h-[602px] left-0 top-[136px] w-[402px]" data-name="real pass 1">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRealPass1} />
       </div>
-      
-      {/* Top Header Elements */}
-      <button
-        onClick={() => onNavigate('home')}
-        className="absolute flex items-center gap-1 left-[15px] top-[22px] cursor-pointer hover:opacity-70 transition-opacity z-10"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M15 18l-6-6 6-6" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <p className="font-['Inter:Bold',sans-serif] font-bold leading-[normal] not-italic text-[31px] text-white whitespace-nowrap">Passes</p>
-      </button>
-      <div className="absolute bg-[#1e1e1e] h-[35px] left-[150px] rounded-[20px] top-[19px] w-[90px]" />
-      <div className="absolute bg-[#edecec] h-[35px] left-[15px] rounded-[20px] top-[84px] w-[90px]" />
-      <div className="absolute bg-[#1e1e1e] h-[35px] left-[261px] rounded-[25px] top-[21px] w-[109px]" />
 
-      {/* Renew / Pass Activation Button */}
-      <button
-        onClick={() => onNavigate('pass')}
-        className="absolute bg-[#1e1e1e] h-[49px] left-[18px] rounded-[26px] top-[755px] w-[363px] cursor-pointer hover:bg-[#2e2e2e] transition-colors"
-      />
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold h-[28px] leading-[normal] left-[47px] not-italic text-[13px] text-white top-[814px] w-[369px] pointer-events-none">*MTC no longer requires pass activation.Your</p>
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] left-[41px] not-italic text-[13px] text-white top-[829px] whitespace-nowrap pointer-events-none">pass is ready to use immediately after purchase.</p>
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] left-[167px] not-italic text-[20px] text-white top-[768px] whitespace-nowrap pointer-events-none">Renew</p>
-
-      {/* Help Icon */}
-      <div className="absolute flex items-center justify-center left-[156px] size-[33.812px] top-[19px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}>
-        <div className="-rotate-130 flex-none">
-          <div className="overflow-clip relative size-[24px]" data-name="call_end">
-            <div className="absolute inset-[33.33%_3.33%_30.41%_3.33%]" data-name="icon">
-              <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 22.4 8.7025">
-                <path d={svgPaths.p17813080} fill="var(--fill-0, white)" id="icon" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold h-[23px] leading-[normal] left-[190px] not-italic text-[16px] text-white top-[27px] w-[47px]">Help</p>
-
-      {/* Clock Button */}
-      <button
-        onClick={() => onNavigate('time')}
-        className="absolute h-[21px] left-[272px] overflow-clip top-[27px] w-[24px] cursor-pointer"
-        data-name="Clock"
-      >
-        <div className="absolute inset-[8.33%]" data-name="Icon">
-          <div className="absolute inset-[-8.57%_-7.5%]">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 23 20.5">
-              <path d={svgPaths.p12612e00} id="Icon" stroke="var(--stroke-0, #E4E4E4)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
+      {/* Top Header */}
+      <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4" style={{ height: 70 }}>
+        <p style={{ fontWeight: 700, fontSize: 28, color: 'white', fontFamily: 'Inter, sans-serif' }}>Passes</p>
+        <div className="flex gap-2">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#1e1e1e' }}>
+            <svg width="14" height="14" viewBox="0 0 22.4 8.7025" fill="none">
+              <path d={svgPaths.p17813080} fill="white" />
             </svg>
+            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>Help</span>
           </div>
-        </div>
-      </button>
-
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] left-[301px] not-italic text-[16px] text-white top-[28px] whitespace-nowrap">History</p>
-      
-      {/* Bus Icon and Label */}
-      <div className="absolute left-[22px] overflow-clip size-[22px] top-[91px]" data-name="directions_bus">
-        <div className="absolute inset-[8.33%_16.67%_12.5%_16.67%]" data-name="icon">
-          <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14.6667 17.4167">
-            <path d={svgPaths.p20ee1b80} fill="var(--fill-0, #1D1B20)" id="icon" />
-          </svg>
+          <button
+            onClick={() => onNavigate('time')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full cursor-pointer hover:opacity-80 transition-opacity"
+            style={{ background: '#1e1e1e' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 23 20.5" fill="none">
+              <path d={svgPaths.p12612e00} stroke="#E4E4E4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
+            </svg>
+            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>History</span>
+          </button>
         </div>
       </div>
-      <p className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] left-[47px] not-italic text-[#1e1e1e] text-[12px] top-[93px] whitespace-nowrap">Bus(1,1)</p>
-      
+
+      {/* Bus filter chip */}
+      <div className="absolute left-[15px] top-[78px] flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#edecec' }}>
+        <svg width="14" height="14" viewBox="0 0 14.6667 17.4167" fill="none">
+          <path d={svgPaths.p20ee1b80} fill="#1D1B20" />
+        </svg>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#1e1e1e', fontFamily: 'Inter, sans-serif' }}>Bus(1,1)</span>
+      </div>
+
       <Group />
       <Group1 />
 
@@ -192,14 +205,13 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
       <button
         onClick={() => onNavigate('qr')}
         className="absolute left-[309px] size-[77px] top-[617px] cursor-pointer hover:opacity-80 transition-opacity"
-        data-name="qwr 1"
       >
         <img alt="QR Code" className="absolute inset-0 max-w-none object-cover opacity-90 pointer-events-none size-full" src={imgQwr1} />
       </button>
 
       <p className="absolute font-['Inter:Semi_Bold_Italic',sans-serif] font-semibold italic leading-[normal] left-[128px] text-[12px] text-[rgba(175,175,175,0.5)] top-[455px] whitespace-nowrap">{`_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ `}</p>
-      
-      {/* Editable Valid Date - UPDATED */}
+
+      {/* Editable Valid Date */}
       {isEditingDate ? (
         <input
           type="text"
@@ -223,13 +235,14 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
       <button
         onClick={() => onNavigate('photo')}
         className="absolute h-[116px] left-[136px] rounded-[30px] top-[295px] w-[130px] cursor-pointer hover:opacity-80 transition-opacity"
-        data-name="vk6 1"
       >
         <img alt="Photo" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[30px] size-full" src={imgVk61} />
       </button>
 
       <div className="absolute bg-[#fdfcfc] h-[60px] left-[23px] rounded-[15px] top-[626px] w-[95px]" />
       <TimeDisplay onNavigate={onNavigate} />
+
+      <BottomNav onNavigate={onNavigate} />
     </div>
   );
 }
