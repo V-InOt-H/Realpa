@@ -66,7 +66,7 @@ const getAnimationDirection = (from: FrameType, to: FrameType) => {
   return 'center';
 };
 
-function useViewportScale() {
+function useViewportScale(fill = false) {
   const [scale, setScale] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
@@ -74,7 +74,9 @@ function useViewportScale() {
     const update = () => {
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const s = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+      const s = fill
+        ? Math.max(vw / DESIGN_W, vh / DESIGN_H)
+        : Math.min(vw / DESIGN_W, vh / DESIGN_H);
       setScale(s);
       setOffset({
         x: (vw - DESIGN_W * s) / 2,
@@ -84,15 +86,18 @@ function useViewportScale() {
     update();
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
-  }, []);
+  }, [fill]);
 
   return { scale, offset };
 }
 
+const FILL_FRAMES: FrameType[] = ['center', 'photo', 'qr', 'time', 'pass'];
+
 export default function App() {
-  const [currentFrame, setCurrentFrame] = useState<FrameType>('splash');
+  const [currentFrame, setCurrentFrame] = useState<FrameType>('center');
   const [previousFrame, setPreviousFrame] = useState<FrameType>('splash');
-  const { scale, offset } = useViewportScale();
+  const isFillFrame = FILL_FRAMES.includes(currentFrame);
+  const { scale, offset } = useViewportScale(isFillFrame);
 
   const handleNavigate = (destination: FrameType) => {
     setPreviousFrame(currentFrame);
@@ -107,7 +112,7 @@ export default function App() {
       style={{
         position: 'fixed',
         inset: 0,
-        background: '#111',
+        background: isFillFrame ? '#000' : '#111',
         overflow: 'hidden',
       }}
     >
@@ -121,8 +126,8 @@ export default function App() {
           transform: `scale(${scale})`,
           transformOrigin: 'top left',
           overflow: 'hidden',
-          borderRadius: scale < 0.98 ? 40 : 0,
-          boxShadow: scale < 0.98 ? '0 30px 80px rgba(0,0,0,0.8)' : 'none',
+          borderRadius: isFillFrame ? 0 : (scale < 0.98 ? 40 : 0),
+          boxShadow: isFillFrame ? 'none' : (scale < 0.98 ? '0 30px 80px rgba(0,0,0,0.8)' : 'none'),
           background: '#000',
         }}
       >
