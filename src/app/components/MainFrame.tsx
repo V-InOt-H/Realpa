@@ -15,25 +15,15 @@ interface MainFrameProps {
 function Group() {
   return (
     <div className="absolute contents left-[71px] top-[546px]">
-      <div
-        className="absolute flex h-[109.053px] items-center justify-center left-[136.39px] top-[601.65px] w-[167.109px]"
-        style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}
-      >
+      <div className="absolute flex h-[109.053px] items-center justify-center left-[136.39px] top-[601.65px] w-[167.109px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}>
         <div className="-rotate-6 flex-none">
           <div className="bg-[#f4f4f4] h-[93.021px] rounded-[15px] w-[158.253px]" />
         </div>
       </div>
-      <div
-        className="absolute flex h-[215.651px] items-center justify-center left-[71px] top-[546px] w-[299.003px]"
-        style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}
-      >
+      <div className="absolute flex h-[215.651px] items-center justify-center left-[71px] top-[546px] w-[299.003px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}>
         <div className="-rotate-6 flex-none">
-          <div className="h-[187.308px] relative rounded-[4px] w-[280.963px]">
-            <img
-              alt=""
-              className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[4px] size-full"
-              src={imgPasss1}
-            />
+          <div className="h-[187.308px] relative rounded-[4px] w-[280.963px]" data-name="passs 1">
+            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[4px] size-full" src={imgPasss1} />
           </div>
         </div>
       </div>
@@ -44,25 +34,15 @@ function Group() {
 function Group1() {
   return (
     <div className="absolute contents left-[71px] top-[546px]">
-      <div
-        className="absolute flex h-[109.053px] items-center justify-center left-[136.39px] top-[601.65px] w-[167.109px]"
-        style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}
-      >
+      <div className="absolute flex h-[109.053px] items-center justify-center left-[136.39px] top-[601.65px] w-[167.109px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "0" } as React.CSSProperties}>
         <div className="-rotate-6 flex-none">
           <div className="bg-[#f4f4f4] h-[93.021px] rounded-[15px] w-[158.253px]" />
         </div>
       </div>
-      <div
-        className="absolute flex h-[215.651px] items-center justify-center left-[71px] top-[546px] w-[299.003px]"
-        style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}
-      >
+      <div className="absolute flex h-[215.651px] items-center justify-center left-[71px] top-[546px] w-[299.003px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}>
         <div className="-rotate-6 flex-none">
-          <div className="h-[187.308px] relative rounded-[4px] w-[280.963px]">
-            <img
-              alt=""
-              className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[4px] size-full"
-              src={imgPasss1}
-            />
+          <div className="h-[187.308px] relative rounded-[4px] w-[280.963px]" data-name="passs 1">
+            <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[4px] size-full" src={imgPasss1} />
           </div>
         </div>
       </div>
@@ -79,12 +59,7 @@ function TimeDisplay({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
   }, []);
 
   const formattedDate = currentTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const formattedTime = currentTime.toLocaleTimeString('en-US', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
+  const formattedTime = currentTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
   return (
     <>
@@ -100,9 +75,7 @@ function TimeDisplay({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
         style={{ "--transform-inner-width": "64", "--transform-inner-height": "22" } as React.CSSProperties}
       >
         <div className="flex-none rotate-[0.08deg]">
-          <p className="font-['Kode_Mono:Regular',sans-serif] font-normal h-[26.934px] leading-[normal] relative text-[17px] text-black w-[84.021px]">
-            {formattedTime}
-          </p>
+          <p className="font-['Kode_Mono:Regular',sans-serif] font-normal h-[26.934px] leading-[normal] relative text-[17px] text-black w-[84.021px]">{formattedTime}</p>
         </div>
       </button>
     </>
@@ -113,13 +86,30 @@ function BottomNav({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
   return (
     <div
       className="absolute left-0 right-0 bottom-0 flex items-center justify-around"
-      style={{ height: 64, background: '#111', borderTop: '1px solid #222', zIndex: 50 }}
+      style={{ height: 64, background: '#111', borderTop: '1px solid #222' }}
     >
-      <NavBtn icon={<Home size={20} color="#9ca3af" />} label="Home" onClick={() => onNavigate('home')} />
-      <NavBtn icon={<PassesNavIcon active />} label="Passes" active />
-      <NavBtn icon={<Radio size={20} color="#9ca3af" />} label="Live" />
-      <NavBtn icon={<Ticket size={20} color="#9ca3af" />} label="Ticket" />
-      <NavBtn icon={<User size={20} color="#9ca3af" />} label="Profile" />
+      <NavBtn
+        icon={<Home size={20} color="#9ca3af" />}
+        label="Home"
+        onClick={() => onNavigate('home')}
+      />
+      <NavBtn
+        icon={<PassesNavIcon active />}
+        label="Passes"
+        active
+      />
+      <NavBtn
+        icon={<Radio size={20} color="#9ca3af" />}
+        label="Live"
+      />
+      <NavBtn
+        icon={<Ticket size={20} color="#9ca3af" />}
+        label="Ticket"
+      />
+      <NavBtn
+        icon={<User size={20} color="#9ca3af" />}
+        label="Profile"
+      />
     </div>
   );
 }
@@ -172,35 +162,20 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
   };
 
   return (
-    <div className="absolute bg-black left-0 top-0 overflow-clip" style={{ width: 402, height: 874 }}>
-      {/* Pass background image */}
-      <div className="absolute h-[602px] left-0 top-[136px] w-[402px]">
-        <img
-          alt=""
-          className="absolute inset-0 max-w-none object-cover pointer-events-none size-full"
-          src={imgRealPass1}
-        />
+    <div className="absolute bg-black h-[874px] left-0 overflow-clip top-0 w-[402px]" data-name="Pass Page">
+      <div className="absolute h-[602px] left-0 top-[136px] w-[402px]" data-name="real pass 1">
+        <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgRealPass1} />
       </div>
 
-      {/* ── TOP HEADER ── */}
-      <div
-        className="absolute left-0 right-0 top-0 flex items-center justify-between px-4"
-        style={{ height: 70 }}
-      >
-        <p style={{ fontWeight: 700, fontSize: 28, color: 'white', fontFamily: 'Inter, sans-serif' }}>
-          Passes
-        </p>
+      {/* Top Header */}
+      <div className="absolute left-0 right-0 top-0 flex items-center justify-between px-4" style={{ height: 70 }}>
+        <p style={{ fontWeight: 700, fontSize: 28, color: 'white', fontFamily: 'Inter, sans-serif' }}>Passes</p>
         <div className="flex gap-2">
-          <div
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-            style={{ background: '#1e1e1e' }}
-          >
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#1e1e1e' }}>
             <svg width="14" height="14" viewBox="0 0 22.4 8.7025" fill="none">
               <path d={svgPaths.p17813080} fill="white" />
             </svg>
-            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
-              Help
-            </span>
+            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>Help</span>
           </div>
           <button
             onClick={() => onNavigate('time')}
@@ -208,32 +183,19 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
             style={{ background: '#1e1e1e' }}
           >
             <svg width="14" height="14" viewBox="0 0 23 20.5" fill="none">
-              <path
-                d={svgPaths.p12612e00}
-                stroke="#E4E4E4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="3"
-              />
+              <path d={svgPaths.p12612e00} stroke="#E4E4E4" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
             </svg>
-            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>
-              History
-            </span>
+            <span style={{ color: 'white', fontSize: 13, fontWeight: 600, fontFamily: 'Inter, sans-serif' }}>History</span>
           </button>
         </div>
       </div>
 
       {/* Bus filter chip */}
-      <div
-        className="absolute left-[15px] top-[78px] flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-        style={{ background: '#edecec' }}
-      >
+      <div className="absolute left-[15px] top-[78px] flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#edecec' }}>
         <svg width="14" height="14" viewBox="0 0 14.6667 17.4167" fill="none">
           <path d={svgPaths.p20ee1b80} fill="#1D1B20" />
         </svg>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#1e1e1e', fontFamily: 'Inter, sans-serif' }}>
-          Bus(1,1)
-        </span>
+        <span style={{ fontSize: 12, fontWeight: 700, color: '#1e1e1e', fontFamily: 'Inter, sans-serif' }}>Bus(1,1)</span>
       </div>
 
       <Group />
@@ -244,16 +206,10 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
         onClick={() => onNavigate('qr')}
         className="absolute left-[309px] size-[77px] top-[617px] cursor-pointer hover:opacity-80 transition-opacity"
       >
-        <img
-          alt="QR Code"
-          className="absolute inset-0 max-w-none object-cover opacity-90 pointer-events-none size-full"
-          src={imgQwr1}
-        />
+        <img alt="QR Code" className="absolute inset-0 max-w-none object-cover opacity-90 pointer-events-none size-full" src={imgQwr1} />
       </button>
 
-      <p className="absolute font-['Inter:Semi_Bold_Italic',sans-serif] font-semibold italic leading-[normal] left-[128px] text-[12px] text-[rgba(175,175,175,0.5)] top-[455px] whitespace-nowrap">
-        {`_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ `}
-      </p>
+      <p className="absolute font-['Inter:Semi_Bold_Italic',sans-serif] font-semibold italic leading-[normal] left-[128px] text-[12px] text-[rgba(175,175,175,0.5)] top-[455px] whitespace-nowrap">{`_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ `}</p>
 
       {/* Editable Valid Date */}
       {isEditingDate ? (
@@ -280,37 +236,12 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
         onClick={() => onNavigate('photo')}
         className="absolute h-[116px] left-[136px] rounded-[30px] top-[295px] w-[130px] cursor-pointer hover:opacity-80 transition-opacity"
       >
-        <img
-          alt="Photo"
-          className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[30px] size-full"
-          src={imgVk61}
-        />
+        <img alt="Photo" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[30px] size-full" src={imgVk61} />
       </button>
 
-      {/* Time box */}
       <div className="absolute bg-[#fdfcfc] h-[60px] left-[23px] rounded-[15px] top-[626px] w-[95px]" />
       <TimeDisplay onNavigate={onNavigate} />
 
-      {/* ── RENEW BUTTON ── */}
-      <button
-        onClick={() => onNavigate('pass')}
-        className="absolute left-[18px] rounded-[26px] cursor-pointer hover:bg-[#2e2e2e] transition-colors flex items-center justify-center"
-        style={{ background: '#1e1e1e', height: 49, top: 700, width: 363 }}
-      >
-        <span style={{ color: 'white', fontSize: 20, fontWeight: 700, fontFamily: 'Inter, sans-serif' }}>
-          Renew
-        </span>
-      </button>
-
-      {/* ── DISCLAIMER TEXT ── */}
-      <p
-        className="absolute font-['Inter:Bold',sans-serif] font-bold leading-[normal] not-italic text-white pointer-events-none"
-        style={{ fontSize: 12, left: 20, top: 757, right: 20 }}
-      >
-        *MTC no longer requires pass activation. Your pass is ready to use immediately after purchase.
-      </p>
-
-      {/* ── BOTTOM NAV ── */}
       <BottomNav onNavigate={onNavigate} />
     </div>
   );
