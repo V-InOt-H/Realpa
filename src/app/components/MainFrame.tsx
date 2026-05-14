@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Home, Radio, Ticket, User } from "lucide-react";
 import svgPaths from "../../imports/Frame7/svg-u9kjemx1g5";
 import imgRealPass1 from "../../imports/Frame7/671bdc45a830fbdbad392677f1d1d3c5865b7339.png";
 import imgPasss1 from "../../imports/Frame7/2dadf32d9b24520cae70cd3a58d0f16672ad325f.png";
 import imgQwr1 from "../../imports/Frame7/adb4cdf593b45fc3e85212ac5c399eed41c39775.png";
 import imgVk61 from "../../imports/Frame7/d3550ae37bcbcc46631351e98c4a9aa61fdc8926.png";
+
+const STORAGE_KEY = 'realpa_valid_date';
+const HISTORY_KEY = 'realpa_date_history';
 
 type NavDest = 'photo' | 'qr' | 'time' | 'pass' | 'home';
 
@@ -14,10 +17,46 @@ interface MainFrameProps {
 
 const HEADER_H = 112;
 const ORIG_PASS_TOP = 136;
-const OFFSET = ORIG_PASS_TOP - 16; // shift all elements up so pass starts 16px into scroll area
+const OFFSET = ORIG_PASS_TOP - 16;
 
 function adjust(originalTop: number) {
   return originalTop - OFFSET;
+}
+
+// Send date data to the service worker for caching
+function sendDateToSW(date: string) {
+  if (navigator.serviceWorker?.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'CACHE_DATE',
+      payload: {
+        validDate: date,
+        timestamp: Date.now(),
+      },
+    });
+  }
+}
+
+// Request cached date from the service worker
+function requestCachedDate(): Promise<string | null> {
+  return new Promise((resolve) => {
+    if (!navigator.serviceWorker?.controller) {
+      resolve(localStorage.getItem(STORAGE_KEY));
+      return;
+    }
+
+    const channel = new MessageChannel();
+    channel.port1.onmessage = (e) => {
+      resolve(e.data?.validDate || null);
+    };
+
+    navigator.serviceWorker.controller.postMessage(
+      { type: 'GET_CACHED_DATE' },
+      [channel.port2]
+    );
+
+    // Fallback timeout
+    setTimeout(() => resolve(localStorage.getItem(STORAGE_KEY)), 1000);
+  });
 }
 
 function TimeDisplay({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
@@ -27,7 +66,7 @@ function TimeDisplay({ onNavigate }: { onNavigate: (d: NavDest) => void }) {
     return () => clearInterval(timer);
   }, []);
   const formattedDate = currentTime.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const formattedTime = currentTime.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const formattedTime = currentTime.toLocaleTimeString('en-us', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
   return (
     <>
       <button
@@ -61,14 +100,7 @@ function PassCard({ onNavigate, validDate, onEditDate, isEditingDate, onDateChan
       <div style={{ position: 'absolute', top: adjust(ORIG_PASS_TOP), left: 0, width: 402, height: 602 }}>
         <img alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }} src={imgRealPass1} />
       </div>
-
-      {/* Stacked pass cards (Group) */}
-      <div style={{ position: 'absolute', top: adjust(601.65), left: 136.39, width: 167.109, height: 109.053 }}>
-        <div style={{ transform: 'rotate(-6deg)', transformOrigin: 'center' }}>
-          <div style={{ background: '#f4f4f4', height: 93.021, borderRadius: 15, width: 158.253 }} />
-        </div>
-      </div>
-      <div style={{ position: 'absolute', top: adjust(546), left: 71, width: 299.003, height: 215.651 }}>
+      <div style={{ position: 'absolute', top: adjust(559), left: 71, width: 299.003, height: 215.651 }}>
         <div style={{ transform: 'rotate(-6deg)', transformOrigin: 'center' }}>
           <div style={{ height: 187.308, borderRadius: 4, width: 280.963, position: 'relative', overflow: 'hidden' }}>
             <img alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none', borderRadius: 4 }} src={imgPasss1} />
@@ -154,10 +186,41 @@ function PassesNavIcon({ active }: { active?: boolean }) {
 }
 
 export default function MainFrame({ onNavigate }: MainFrameProps) {
-  const [isEditingDate, setIsEditingDate] = useState(false);
-  const [validDate, setValidDate] = useState('15/05/2026');
+   const [isEditingDate, setIsEditingDate] = useState(false);
+   const [validDate, setValidDate] = useState(() => {
+     // Try to get cached date from service worker first, fall back to localStorage
+     const stored = localStorage.getItem(STORAGE_KEY);
+     if (stored) return stored;
+     return '15/05/2026';
+   });
 
-  const SCROLL_CONTENT_H = 760;
+   // Load cached date from SW on mount
+   useEffect(() => {
+     requestCachedDate().then((cached) => {
+       if (cached) {
+         setValidDate(cached);
+       }
+     });
+   }, []);
+
+   // Persist date changes to localStorage and SW cache
+   const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+     const newDate = e.target.value;
+     setValidDate(newDate);
+     localStorage.setItem(STORAGE_KEY, newDate);
+     sendDateToSW(newDate);
+
+     // Store in history
+     const history: { date: string; timestamp: number }[] = JSON.parse(
+       localStorage.getItem(HISTORY_KEY) || '[]'
+     );
+     history.push({ date: newDate, timestamp: Date.now() });
+     // Keep last 50 entries
+     if (history.length > 50) history.shift();
+     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+   }, []);
+
+   const SCROLL_CONTENT_H = 760;
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'black', width: 402, height: 874, overflow: 'hidden' }}>
@@ -215,7 +278,7 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
             validDate={validDate}
             onEditDate={() => setIsEditingDate(true)}
             isEditingDate={isEditingDate}
-            onDateChange={(e) => setValidDate(e.target.value)}
+            onDateChange={handleDateChange}
             onDateBlur={() => setIsEditingDate(false)}
             onDateKeyDown={(e) => { if (e.key === 'Enter') setIsEditingDate(false); }}
           />
@@ -225,31 +288,26 @@ export default function MainFrame({ onNavigate }: MainFrameProps) {
             onClick={() => onNavigate('pass')}
             style={{
               position: 'absolute',
-              top: adjust(755),
-              left: 18,
-              width: 363,
+              top: adjust(625),
+              left: 155,
+              width: 125,
               height: 49,
-              background: '#1e1e1e',
+              background: "invisible",
               borderRadius: 26,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#2e2e2e')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#1e1e1e')}
+            onMouseEnter={e => (e.currentTarget.style.background = 'invisible')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'invisible')}
           >
-            <span style={{ color: 'white', fontWeight: 700, fontSize: 20, fontFamily: 'Inter, sans-serif' }}>Renew</span>
+            <span style={{ color: 'white', fontWeight: 700, fontSize: 20, fontFamily: 'Inter, sans-serif' }}></span>
           </button>
 
           {/* ─── Disclaimer text ─── */}
-          <p style={{ position: 'absolute', top: adjust(814), left: 47, fontSize: 13, fontWeight: 700, color: 'white', fontFamily: 'Inter, sans-serif', width: 310 }}>
-            *MTC no longer requires pass activation. Your
-          </p>
-          <p style={{ position: 'absolute', top: adjust(829), left: 41, fontSize: 13, fontWeight: 700, color: 'white', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
-            pass is ready to use immediately after purchase.
-          </p>
-
+          <p className="absolute font-['Inter:Bold',sans-serif] font-bold h-[28px] leading-[normal] left-[15px] right-[15px] not-italic text-[13px] text-white top-[632px]">*MTC no longer requires pass activation.Your pass is ready </p>
+          <p className="absolute font-['Inter:Bold',sans-serif] font-bold h-[28px] leading-[normal] left-[100px] right-[15px] not-italic text-[13px] text-white top-[650px]">use immediatly after purchase.* </p>
         </div>
       </div>
 

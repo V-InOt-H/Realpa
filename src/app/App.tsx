@@ -13,57 +13,10 @@ type FrameType = 'splash' | 'home' | 'center' | 'photo' | 'qr' | 'time' | 'pass'
 const DESIGN_W = 402;
 const DESIGN_H = 874;
 
-const slideVariants = {
-  center: {
-    initial: { x: 0, y: 0, opacity: 1 },
-    animate: { x: 0, y: 0, opacity: 1 },
-    exit: { x: 0, y: 0, opacity: 0 },
-  },
-  fromLeft: {
-    initial: { x: '-100%', y: 0, opacity: 0 },
-    animate: { x: 0, y: 0, opacity: 1 },
-    exit: { x: '-100%', y: 0, opacity: 0 },
-  },
-  fromRight: {
-    initial: { x: '100%', y: 0, opacity: 0 },
-    animate: { x: 0, y: 0, opacity: 1 },
-    exit: { x: '100%', y: 0, opacity: 0 },
-  },
-  fromTop: {
-    initial: { x: 0, y: '-100%', opacity: 0 },
-    animate: { x: 0, y: 0, opacity: 1 },
-    exit: { x: 0, y: '-100%', opacity: 0 },
-  },
-  fromBottom: {
-    initial: { x: 0, y: '100%', opacity: 0 },
-    animate: { x: 0, y: 0, opacity: 1 },
-    exit: { x: 0, y: '100%', opacity: 0 },
-  },
-  fadeIn: {
-    initial: { opacity: 0, scale: 0.97 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.97 },
-  },
-};
-
-const getAnimationDirection = (from: FrameType, to: FrameType) => {
-  if (from === 'splash') return 'fadeIn';
-  if (to === 'center') {
-    if (from === 'home') return 'fromRight';
-    if (from === 'photo') return 'fromLeft';
-    if (from === 'pass') return 'fromRight';
-    if (from === 'qr') return 'fromTop';
-    if (from === 'time') return 'fromBottom';
-  }
-  if (to === 'home') return 'fromLeft';
-  if (from === 'center') {
-    if (to === 'photo') return 'fromLeft';
-    if (to === 'pass') return 'fromRight';
-    if (to === 'qr') return 'fromTop';
-    if (to === 'time') return 'fromBottom';
-  }
-  if (from === 'home' && to === 'center') return 'fromRight';
-  return 'center';
+const transitionVariants = {
+  initial: { opacity: 0, scale: 0.96 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.96 },
 };
 
 function useViewportScale() {
@@ -91,16 +44,11 @@ function useViewportScale() {
 
 export default function App() {
   const [currentFrame, setCurrentFrame] = useState<FrameType>('splash');
-  const [previousFrame, setPreviousFrame] = useState<FrameType>('splash');
   const { scale, offset } = useViewportScale();
 
   const handleNavigate = (destination: FrameType) => {
-    setPreviousFrame(currentFrame);
     setCurrentFrame(destination);
   };
-
-  const animationDirection = getAnimationDirection(previousFrame, currentFrame);
-  const variant = slideVariants[animationDirection];
 
   return (
     <div
@@ -125,14 +73,16 @@ export default function App() {
           boxShadow: scale < 0.98 ? '0 30px 80px rgba(0,0,0,0.8)' : 'none',
           background: '#000',
         }}
+        ir
+        
       >
         <AnimatePresence mode="wait">
           <motion.div
             key={currentFrame}
-            initial={variant.initial}
-            animate={variant.animate}
-            exit={variant.exit}
-            transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+            initial={transitionVariants.initial}
+            animate={transitionVariants.animate}
+            exit={transitionVariants.exit}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             style={{ position: 'absolute', inset: 0 }}
           >
             {currentFrame === 'splash' && (

@@ -112,9 +112,13 @@ export default function PassActivationFrame({ onNavigate }: PassActivationFrameP
           </div>
         </div>
       </div>
+
       <div className="absolute flex h-[253.881px] items-center justify-center left-[21.28px] top-[309.93px] w-[375.244px]" style={{ "--transform-inner-width": "0", "--transform-inner-height": "22" } as React.CSSProperties}>
         <div className="flex-none rotate-[-1.03deg]">
-          <div className="h-[247.228px] relative rounded-[4px] w-[370.843px]" data-name="passs 1">
+          <div
+            className="h-[247.228px] relative rounded-[4px] w-[370.843px]"
+            data-name="passs 1"
+           >
             <img alt="Pass Card" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[4px] size-full" src={imgIPhone1617Pro2} />
           </div>
         </div>
